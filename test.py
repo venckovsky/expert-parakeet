@@ -1,4 +1,9 @@
-import unittest, types
+import unittest
+import types
+import shelve
+import tempfile
+import shutil
+import indexer as ixr
 import tokenizer_1 as atz
 import tokenizer_2 as ftz
 
@@ -99,6 +104,45 @@ class SymbolTypeTokenizerTest(unittest.TestCase):
         test = ftz.Tokenizer('…')
         result = [token for token in test.tokenize()]
         self.assertEqual(len(result), 1)
+
+
+class IndexerTest(unittest.TestCase):
+    def test_basics(self):
+        self.tmp = tempfile.mkdtemp()
+        db = ixr.Database(self.tmp + '/test')
+        db.add('Wird er auch an seine Grenzen kommen.')
+        result = shelve.open(self.tmp + '/test', 'r')
+        self.assertEqual(len(result), 7)
+        contents = {
+            'seine': {'positions': [(16, 21)], 'type': 'letter'},
+            'Wird': {'positions': [(0, 4)], 'type': 'letter'},
+            'kommen': {'positions': [(30, 36)], 'type': 'letter'},
+            'auch': {'positions': [(8, 12)], 'type': 'letter'},
+            'Grenzen': {'positions': [(22, 29)], 'type': 'letter'},
+            'er': {'positions': [(5, 7)], 'type': 'letter'},
+            'an': {'positions': [(13, 15)], 'type': 'letter'}
+        }
+        self.assertEqual(result, contents)
+        result.close()
+        shutil.rmtree(self.tmp)
+
+    def test_dict_duplicates(self):
+        self.tmp = tempfile.mkdtemp()
+        db = ixr.Database(self.tmp + '/test')
+        db.add('Nachts da ist der Teufel los! Nachts! 3319 3319 3319')
+        result = shelve.open(self.tmp + '/test', 'r')
+        self.assertEqual(len(result), 7)
+        contents = {
+            'los': {'positions': [(25, 28)], 'type': 'letter'},
+            'Nachts': {'positions': [(0, 6), (30, 36)], 'type': 'letter'},
+            'Teufel': {'positions': [(18, 24)], 'type': 'letter'},
+            '3319': {'positions': [(38, 42), (43, 47), (48, 52)], 'type': 'digit'},
+            'der': {'positions': [(14, 17)], 'type': 'letter'},
+            'ist': {'positions': [(10, 13)], 'type': 'letter'},
+            'da': {'positions': [(7, 9)], 'type': 'letter'}}
+        self.assertEqual(result, contents)
+        result.close()
+        shutil.rmtree(self.tmp)
 
 
 if __name__ == "__main__":

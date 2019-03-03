@@ -16,7 +16,3 @@ class Database:
                     database[token.substring]['type'] = token.type
             print(dict(database))
             database.close()
-
-
-db = Database('mon_db')
-db.add('wirst du du du du du du auch an deine Grenzen kommen')
