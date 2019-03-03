@@ -14,7 +14,8 @@ class Database:
                     database[token.substring].setdefault('positions', [])
                     database[token.substring]['positions'].append(token.span)
                     database[token.substring]['type'] = token.type
-        database.close()
+            print(dict(database))
+            database.close()
 
 
 db = Database('mon_db')

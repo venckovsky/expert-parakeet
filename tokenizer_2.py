@@ -55,7 +55,6 @@ class Tokenizer:
             # if the type of the current symbol is different from the type of
             # the first symbol of the current token, then the current token has
             # ended and the current symbol is the first symbol of the next token
-            print(':::this is num check:::', num)
             if num != first_symbol_position and current_sym.type != first_sym_aug.type:
                 yield Token(self.text[first_symbol_position:num],
                             (first_symbol_position, num),
@@ -65,15 +64,4 @@ class Tokenizer:
             if num + 1 == len(self.text):
                 yield Token(self.text[first_symbol_position:num + 1],
                             (first_symbol_position, num + 1),
-                            first_sym_aug.type)
-
-
-
-a = 'This is Krymskaya, the 2 platform is on the lef#t left'
-print(a[47])
-print(len(a))
-tokenizer = Tokenizer(a)
-for token in tokenizer.tokenize():
-    #print('token: ', token.substring, ' span: ', token.span, ' type ', token.type)
-    print(token.substring)
-
+                            current_sym.type)
