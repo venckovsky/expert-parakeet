@@ -61,6 +61,7 @@ class Tokenizer:
                             first_sym_aug.type)
                 first_symbol = sym
                 first_symbol_position = num
+            # this catches the last token
             if num + 1 == len(self.text):
                 yield Token(self.text[first_symbol_position:num + 1],
                             (first_symbol_position, num + 1),

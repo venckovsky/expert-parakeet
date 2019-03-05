@@ -4,15 +4,12 @@ from tokenizer_2 import Tokenizer
 
 class Database:
     def __init__(self, db):
-        self.db = db
+        self.db = shelve.open(db, writeback=True)
 
     def add(self, text):
-        with shelve.open(self.db, writeback=True) as database:
-            for token in Tokenizer(text).tokenize():
-                if token.type == 'digit' or token.type == 'letter':
-                    database.setdefault(token.substring, {})
-                    database[token.substring].setdefault('positions', [])
-                    database[token.substring]['positions'].append(token.span)
-                    database[token.substring]['type'] = token.type
-            print(dict(database))
-            database.close()
+        for token in Tokenizer(text).tokenize():
+            if token.type == 'digit' or token.type == 'letter':
+                self.db.setdefault(token.substring, {}).setdefault('positions', [])
+                self.db[token.substring]['positions'].append(token.span)
+                self.db[token.substring]['type'] = token.type
+        self.db.sync()
