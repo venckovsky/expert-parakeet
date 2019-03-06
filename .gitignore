@@ -5,3 +5,4 @@ build
 *.iml
 modules
 log.dir_IS_UNDEFINED
+__pycache__
