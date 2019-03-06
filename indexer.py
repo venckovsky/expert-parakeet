@@ -13,3 +13,7 @@ class Database:
                 self.db[token.substring]['positions'].append(token.span)
                 self.db[token.substring]['type'] = token.type
         self.db.sync()
+	
+
+    def __del__(self):
+        self.db.close()
